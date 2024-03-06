@@ -1,85 +1,90 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class GamplayOverlay : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public TMP_Text highScoreText;
-    public TMP_Text currentTimeText;
-    public GameObject pauseMenu;
+    public TMP_Text countdownText; // Assign this in the inspector
+    public TMP_Text elapsedTimeText; // Assign this in the inspector
+    public GameObject gameOverUI; // Assign the game over UI element in the inspector
+    public GameObject pauseMenuUI; // Assign the pause menu UI element in the inspector
+    public Button resumeButton; // Assign the resume button in the inspector
 
-    private float currentTime = 0f;
-    private float highScoreTime = 0f;
-    private bool isPaused = false;
+    public float countdownTime = 60f; // Time in seconds for countdown timer
+    private float elapsedTime = 0f; // Time elapsed since start of level
+    private bool isGameOver = false; // Flag to track game over state
+    private bool isPaused = false; // Flag to track pause state
 
     void Start()
     {
-        // Initialize high score time
-        highScoreTime = PlayerPrefs.GetFloat("HighScoreTime", 0f);
-        UpdateHighScoreText();
+        // Add listener to the resume button
+        if (resumeButton != null)
+        {
+            resumeButton.onClick.AddListener(ResumeGame);
+        }
     }
 
     void Update()
     {
-        if (!isPaused)
+        if (!isGameOver && !isPaused)
         {
-            // Update current time
-            currentTime += Time.deltaTime;
-            UpdateCurrentTimeText();
+            // Countdown timer logic
+            countdownTime -= Time.deltaTime;
+            if (countdownTime <= 0f)
+            {
+                countdownTime = 0f;
+                GameOver();
+            }
+            UpdateCountdownText();
+
+            // Elapsed time logic
+            elapsedTime += Time.deltaTime;
+            UpdateElapsedTimeText();
         }
 
-        // Check for ESC key to pause the game
+        // Check for pause input
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            isPaused = !isPaused;
-            TogglePauseMenu(isPaused);
-            Time.timeScale = isPaused ? 0f : 1f;
+            TogglePause();
         }
     }
 
-    void UpdateCurrentTimeText()
+    void UpdateCountdownText()
     {
-        // Update the current time text
-        currentTimeText.text = "Current Time: " + FormatTime(currentTime);
+        int minutes = Mathf.FloorToInt(countdownTime / 60f);
+        int seconds = Mathf.FloorToInt(countdownTime % 60f);
+        countdownText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    void UpdateHighScoreText()
+    void UpdateElapsedTimeText()
     {
-        // Update the high score time text
-        highScoreText.text = "High Score: " + FormatTime(highScoreTime);
+        int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+        int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+        elapsedTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    void TogglePauseMenu(bool showMenu)
+    void GameOver()
     {
-        // Activate/deactivate the pause menu
-        if (pauseMenu != null)
+        // Implement your game over logic here
+        isGameOver = true;
+        Debug.Log("Game Over!"); // Placeholder, you can replace this with actual game over actions
+
+        // Activate the game over UI element
+        if (gameOverUI != null)
         {
-            pauseMenu.SetActive(showMenu);
-        }
-        else
-        {
-            Debug.LogError("Pause menu GameObject is not assigned!");
+            gameOverUI.SetActive(true);
         }
     }
 
-    string FormatTime(float timeInSeconds)
+    void TogglePause()
     {
-        // Format time in minutes and seconds
-        int minutes = Mathf.FloorToInt(timeInSeconds / 60);
-        int seconds = Mathf.FloorToInt(timeInSeconds % 60);
-        string formattedTime = string.Format("{0:00}:{1:00}", minutes, seconds);
-        return formattedTime;
+        isPaused = !isPaused;
+        pauseMenuUI.SetActive(isPaused);
+        Time.timeScale = isPaused ? 0f : 1f; // Freeze/unfreeze time
     }
 
-    public void UpdateHighScore()
+    void ResumeGame()
     {
-        // Update high score if the current time is greater
-        if (currentTime > highScoreTime)
-        {
-            highScoreTime = currentTime;
-            PlayerPrefs.SetFloat("HighScoreTime", highScoreTime);
-            UpdateHighScoreText();
-        }
+        TogglePause(); // Hide pause menu
     }
 }

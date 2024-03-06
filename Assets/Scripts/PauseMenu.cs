@@ -4,49 +4,59 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject gameplayUI;
-    public GameObject settingsMenu;
-    public GameObject skinsMenu;
-    public AudioSource buttonClickSound; // Reference to the AudioSource component
+    public GameObject pauseMenuUI;
+    public GameObject settingsMenuUI;
+    public GameObject skinsMenuUI;
+    public GameObject mainMenuUI;
 
-    public void PlayButtonClickSound()
+    private bool isPaused = false;
+
+    void Update()
     {
-        // Play the button click sound
-        buttonClickSound.Play();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused)
+                Resume();
+            else
+                Pause();
+        }
     }
-    public void ResumeGame()
+
+    public void Resume()
     {
-        // Hide the pause menu
-        gameObject.SetActive(false);
+        pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f; // Resume the gameplay
+        isPaused = false;
+    }
 
-        // Show the gameplay UI
-        gameplayUI.SetActive(true);
-
-        // Resume the game by setting the Time.timeScale back to 1
-        Time.timeScale = 1f;
+    void Pause()
+    {
+        pauseMenuUI.SetActive(true);
+        Time.timeScale = 0f; // Pause the gameplay
+        isPaused = true;
     }
 
     public void OpenSettingsMenu()
     {
-        // Hide the pause menu
-        gameObject.SetActive(false);
-
-        // Show the settings menu
-        settingsMenu.SetActive(true);
+        settingsMenuUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
     }
 
     public void OpenSkinsMenu()
     {
-        // Hide the pause menu
-        gameObject.SetActive(false);
+        skinsMenuUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
+    }
 
-        // Show the skins menu
-        skinsMenu.SetActive(true);
+    public void OpenMainMenu()
+    {
+        mainMenuUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
     }
 
     public void QuitGame()
     {
-        // Quit the game
+        Debug.Log("Quitting game...");
         Application.Quit();
     }
 }

@@ -3,35 +3,42 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject settingsMenu;
-    public GameObject skinsMenu;
-    public GameObject otherMenu;
+    public GameObject mainMenuUI;
+    public GameObject settingsMenuUI;
+    public GameObject skinsMenuUI;
+    public GameObject gameplayUI;
 
-    public void PlayGame()
+    private void Start()
     {
-        // Deactivate the main menu
-        gameObject.SetActive(false);
-
-        // Activate the other menu
-        otherMenu.SetActive(true);
-
-        // Load the game scene
-        SceneManager.LoadScene("GameScene");
+        // Ensure that the main menu UI is initially active, and others are inactive
+        mainMenuUI.SetActive(true);
+        settingsMenuUI.SetActive(false);
+        skinsMenuUI.SetActive(false);
+        gameplayUI.SetActive(false);
     }
 
-    public void OpenSettingsMenu()
+    public void OnPlayButtonPressed()
     {
-        // Enable the settings menu
-        settingsMenu.SetActive(true);
+        // Turn off main menu UI and turn on gameplay UI
+        mainMenuUI.SetActive(false);
+        gameplayUI.SetActive(true);
     }
 
-    public void OpenSkinsMenu()
+    public void OnSettingsButtonPressed()
     {
-        // Enable the skins menu
-        skinsMenu.SetActive(true);
+        // Turn off main menu UI and turn on settings menu UI
+        mainMenuUI.SetActive(false);
+        settingsMenuUI.SetActive(true);
     }
 
-    public void QuitGame()
+    public void OnSkinsButtonPressed()
+    {
+        // Turn off main menu UI and turn on skins menu UI
+        mainMenuUI.SetActive(false);
+        skinsMenuUI.SetActive(true);
+    }
+
+    public void OnQuitButtonPressed()
     {
         // Quit the game
         Application.Quit();
