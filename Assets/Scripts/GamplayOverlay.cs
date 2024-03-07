@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
         int minutes = Mathf.FloorToInt(countdownTime / 60f);
         int seconds = Mathf.FloorToInt(countdownTime % 60f);
         countdownText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+        Debug.Log("Countdown Time: " + countdownTime);
     }
 
     void UpdateElapsedTimeText()
@@ -65,14 +67,11 @@ public class GameManager : MonoBehaviour
 
     void GameOver()
     {
-        // Implement your game over logic here
-        isGameOver = true;
-        Debug.Log("Game Over!"); // Placeholder, you can replace this with actual game over actions
-
         // Activate the game over UI element
         if (gameOverUI != null)
         {
             gameOverUI.SetActive(true);
+            Debug.Log("Menu Turned On.");
         }
     }
 
